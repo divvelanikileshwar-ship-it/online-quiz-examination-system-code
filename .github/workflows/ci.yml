@@ -1,0 +1,26 @@
+name: Project checks
+on:
+  push:
+    branches: [main, "feature/**"]
+  pull_request:
+    branches: [main]
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Check backend JavaScript syntax
+        run: |
+          cd server
+          for file in server.js seed.js config/*.js middleware/*.js models/*.js routes/*.js; do node --check "$file"; done
+      - name: Install frontend dependencies
+        run: |
+          cd client
+          npm install
+      - name: Build frontend
+        run: |
+          cd client
+          npm run build
